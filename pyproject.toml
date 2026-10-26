@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=65.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "telegram-channel-scraper"
+version = "2.0.0"
+description = "Zero-auth public Telegram channel scraper with Modern Desktop GUI, Web Dashboard, and CLI"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+keywords = ["telegram", "scraper", "crawler", "customtkinter", "gradio", "data-extraction"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Communications :: Chat",
+    "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+]
+dependencies = [
+    "httpx>=0.28.0",
+    "beautifulsoup4>=4.12.0",
+    "lxml>=5.0.0",
+    "customtkinter>=5.2.0",
+    "pillow>=10.0.0",
+    "pandas>=2.2.0",
+    "openpyxl>=3.1.0",
+    "gradio>=4.0.0",
+    "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+build = [
+    "pyinstaller>=6.0.0",
+]
+dev = [
+    "pytest>=8.0.0",
+    "flake8>=7.0.0",
+]
+
+[project.scripts]
+telegram-scraper = "main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["scraper*", "ui*", "assets*"]
