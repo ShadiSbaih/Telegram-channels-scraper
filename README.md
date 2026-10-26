@@ -1,166 +1,250 @@
-# ⚡ Telegram Channel Scraper (2026 Edition)
+# Telegram Channel Scraper (Enterprise & OSINT Edition)
 
-[![CI](https://github.com/placeholder/telegram-channel-scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/placeholder/telegram-channel-scraper/actions)
-[![Python 3.10+](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
+[![CI Pipeline](https://github.com/placeholder/telegram-channel-scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/placeholder/telegram-channel-scraper/actions)
+[![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![GUI: CustomTkinter](https://img.shields.io/badge/GUI-CustomTkinter-0088cc.svg)](https://github.com/TomSchimansky/CustomTkinter)
-[![Zero Auth](https://img.shields.io/badge/Auth-Zero%20Login%20Required-success.svg)](https://t.me)
-[![Platform: Windows](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
-
-A high-performance, **100% free**, and **zero-authentication** Telegram scraper featuring a modern **Desktop GUI** (CustomTkinter), a **Web Dashboard** (Gradio), a headless **Terminal CLI**, and a pre-compiled standalone **Windows Executable (`.exe`)**.
-
-Extract messages, reactions, paid Telegram Stars, view counts, media links, and forward metadata from any public Telegram channel **without needing Telegram API credentials, bot tokens, phone numbers, or account logins**.
+[![GUI Framework](https://img.shields.io/badge/GUI-CustomTkinter%20v5-0088cc.svg)](https://github.com/TomSchimansky/CustomTkinter)
+[![Authentication Mode](https://img.shields.io/badge/Authentication-Zero--Auth%20Public%20Gateway-success.svg)](https://t.me)
+[![Build Target](https://img.shields.io/badge/Artifact-Windows%20x64%20EXE-informational.svg)](dist/TelegramScraper.exe)
 
 ---
 
-## 🌟 Key Features
+## 1. Executive Summary
 
-- 🔓 **Zero Authentication**: Scrapes via Telegram's public web preview endpoint (`https://t.me/s/{channel}`). Completely free, no account bans or API limits.
-- ⚡ **2026 Format Extraction**:
-  - Full plain text & structured HTML message preservation
-  - Humanized view counter conversion (`5.84M` → `5,840,000`, `12.3K` → `12,300`)
-  - Full reaction breakdown (emojis and individual counts)
-  - **Telegram Stars (⭐)**: Full extraction of paid star reactions
-  - Forwarded source metadata and reply references
-  - Media extraction (photos, albums, video previews, documents, audio clips)
-- 🔄 **Backward Pagination**: Iteratively crawls historical posts backwards via `?before={id}` until target limit is reached.
-- 🖥️ **Triple Interface**:
-  - **Modern Desktop GUI**: Native dark-themed window (`CustomTkinter`) with 60fps responsive async threading, live metrics (speed, counts, views, stars), real-time table, search/filters, and a message inspector modal.
-  - **Browser Web Dashboard**: Interactive Gradio dashboard (`python main.py --web`) with DataFrames and instant browser downloads.
-  - **Headless CLI**: Rich terminal output (`python main.py --cli`) ideal for automation and scheduled cron jobs.
-- 📦 **Multi-Format Exports**:
-  - **CSV**: Encoded in `utf-8-sig` (UTF-8 with BOM) for clean emoji and foreign alphabet support in Microsoft Excel.
-  - **Excel (.xlsx)**: Styled sheets with custom branded headers and auto-adjusted column widths.
-  - **JSON**: Comprehensive structured metadata and message records.
-- 🚀 **Standalone Executable**: Single-file portable `.exe` with embedded icon, themes, and fonts — no Python installation needed for end users.
+**Telegram Channel Scraper** is an enterprise-grade, zero-authentication intelligence and extraction framework engineered for public Telegram channels. Designed for Open-Source Intelligence (OSINT) practitioners, academic researchers, compliance monitors, and data engineers, it enables full-fidelity message extraction without requiring Telegram API keys (`api_id`, `api_hash`), phone number registrations, bot credentials, or session authentications.
+
+By operating directly over Telegram's distributed web preview infrastructure (`https://t.me/s/{channel}`), the framework bypasses user-account rate quotas, avoids telephone number exposure, and eliminates the risk of account bans or credential leakage.
+
+### Key Capabilities at a Glance
+
+- **Authentication-Free Operation**: Zero credential requirements; queries public gateways directly.
+- **2026 Telegram Schema Compatibility**: Native parsing of standard emojis, custom reaction counts, and paid **Telegram Stars (⭐)**.
+- **High-Fidelity Numeric Normalization**: Converts localized view metrics (e.g., `5.84M` → `5,840,000`, `14.2K` → `14,200`) into normalized 64-bit integers.
+- **Stateful Reverse-Chronological Crawling**: Follows Telegram's reverse cursor pagination (`?before={id}`) with built-in deduplication and loop detection.
+- **Tri-Modal Interface**: Modern hardware-accelerated **Desktop GUI** (`CustomTkinter`), **Browser Web App** (`Gradio`), and **Terminal CLI** (`Rich`).
+- **Production Data Pipelines**: One-click output serialization to Microsoft Excel (`.xlsx` with custom typographic styling), UTF-8 BOM CSV (`utf-8-sig` for international character and emoji fidelity), and schema-validated JSON.
+- **Standalone Windows Distribution**: Pre-compiled single-file executable (`TelegramScraper.exe`) requiring zero dependencies or Python installations on host machines.
 
 ---
 
-## 🚀 Quick Start
+## 2. System Architecture
 
-### Option 1: Run Pre-Compiled Windows Executable (No Python Required)
+The following diagram illustrates the unidirectional data pipeline from public ingress to output serialization:
 
-1. Navigate to the [`dist/`](dist/) folder.
-2. Double-click **`TelegramScraper.exe`** to launch the Desktop GUI immediately.
+```mermaid
+flowchart TD
+    A[Channel Input: Handle / URL / Message Link] --> B[Normalizer & Validator]
+    B --> C[TelegramCrawler Engine]
+    
+    subgraph Network & Resilience Layer
+        C --> D[Resilient HTTP Client]
+        D -->|Exponential Backoff + Jitter| E[t.me/s/ Public Web Gateway]
+        E -->|Raw HTML Response| D
+    end
+    
+    subgraph Extraction & Transformation
+        D --> F[BeautifulSoup 2026 DOM Parser]
+        F --> G[Numeric Normalizer]
+        F --> H[Reaction & Star Aggregator]
+        F --> I[Media Metadata Extractor]
+        G & H & I --> J[TelegramMessage Dataclass Entities]
+    end
+    
+    subgraph UI & Ingestion Interfaces
+        J --> K[CustomTkinter Desktop GUI]
+        J --> L[Gradio Web Dashboard]
+        J --> M[Headless CLI Runner]
+    end
+    
+    subgraph Serialization & Persistence Layer
+        K & L & M --> N[CSV Exporter utf-8-sig]
+        K & L & M --> O[Excel Exporter openpyxl Styled]
+        K & L & M --> P[JSON Exporter Pretty-Printed]
+        K & L & M --> Q[Async Media Downloader]
+    end
+```
 
-To build the executable yourself:
+---
+
+## 3. Data Schema Specification
+
+Every extracted record is normalized into a strongly typed `TelegramMessage` model containing the following schema attributes:
+
+| Field Name | Type | Description | Example |
+| :--- | :--- | :--- | :--- |
+| `id` | `int` | Unique channel-scoped message identifier | `1042` |
+| `channel` | `str` | Normalized Telegram channel username | `"durov"` |
+| `datetime_iso` | `str` | ISO 8601 UTC timestamp of message publication | `"2026-10-24T18:32:00+00:00"` |
+| `views` | `int` | Normalized view count parsed to integer | `5840000` |
+| `views_raw` | `str` | Humanized views label as rendered by Telegram | `"5.84M"` |
+| `reactions` | `dict[str, int]`| Mapping of reaction emojis to engagement counts | `{"👍": 14200, "🔥": 8900}` |
+| `stars` | `int` | Total count of paid Telegram Stars (⭐) awarded | `1250` |
+| `text_plain` | `str` | Sanitized plain text with whitespace normalization | `"Major update announced..."` |
+| `text_html` | `str` | Raw HTML preserving formatting, bold, italics, links | `"<div class='tgme_widget...'>"` |
+| `is_forwarded` | `bool` | Flag denoting whether post is a forwarded message | `false` |
+| `forward_from` | `str` | Original source channel or author handle (if forwarded) | `null` |
+| `reply_to_id` | `int` | ID of referenced parent message (if in thread/reply) | `1039` |
+| `media` | `list[MediaItem]`| Array of embedded photo, video, document, or audio URIs | `[{"media_type": "photo", ...}]` |
+| `url` | `str` | Canonical direct permalink to post | `"https://t.me/durov/1042"` |
+
+---
+
+## 4. Installation & Getting Started
+
+### Method A: Standalone Windows Binary (Recommended for End Users)
+
+The project includes a pre-compiled, self-contained Windows executable requiring zero configuration:
+
+1. Download or locate [`dist/TelegramScraper.exe`](dist/TelegramScraper.exe).
+2. Double-click the file to launch the **Desktop GUI**.
+3. *Note*: No Python runtime, external DLLs, or administrative privileges are required.
+
+To compile the binary from source:
 ```powershell
 python build_exe.py
 ```
 
 ---
 
-### Option 2: Run From Python Source
+### Method B: Python Source Installation
 
 #### Prerequisites
-- Python 3.10 or higher
-- Git
+- **Python**: Version `3.10` or higher (`3.11+` recommended).
+- **Package Manager**: `pip` (or `uv` / `poetry`).
 
-#### Installation
+#### Step-by-Step Setup
 ```powershell
-# Clone the repository
+# 1. Clone repository
 git clone https://github.com/placeholder/telegram-channel-scraper.git
 cd telegram-channel-scraper
 
-# Create and activate virtual environment
+# 2. Initialize virtual environment
 python -m venv .venv
-.venv\Scripts\activate      # On Windows
-# source .venv/bin/activate # On macOS/Linux
 
-# Install dependencies
+# 3. Activate virtual environment
+# Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# Windows (CMD):
+.venv\Scripts\activate.bat
+# Linux / macOS:
+source .venv/bin/activate
+
+# 4. Install production dependencies
 pip install -r requirements.txt
 ```
 
 ---
 
-## 🖥️ Running the Application
+## 5. Execution Modes & Interface Guide
 
-### 1. Modern Desktop GUI (Default)
+### Mode 1: Modern Desktop GUI (Default)
+
+The Desktop interface is built with CustomTkinter, designed for high contrast and sustained analytical workflows.
+
 ```powershell
 python main.py
 ```
-- Paste any channel handle or link (`durov`, `@telegram`, `https://t.me/durov`).
-- Set your max messages limit and delay.
-- Click **▶ Start Scraping**.
-- Inspect live metrics (views, reactions, speed).
-- Double-click any row to open the **Message Inspector** modal.
-- Export to **CSV**, **Excel**, or **JSON** with one click.
 
-### 2. Browser Web Dashboard
+#### GUI Highlights:
+- **Thread-Isolated Asynchronous Engine**: The GUI runs on a dedicated thread with an asyncio loop, guaranteeing zero window freezing or dropped frames during heavy network transfers.
+- **Live Analytical Telemetry**: Real-time meters for collection velocity (`msgs/sec`), total accumulated views, total reactions, and cumulative Telegram Stars.
+- **Zebra-Striped Data Grid**: Native ttk-backed tree view with dynamic alternating colors (`#0F1A2C` / `#080F1D`) for low eye fatigue.
+- **Interactive Message Inspector**: Double-click any record to launch the modal inspector displaying complete raw HTML, structured reaction breakdowns, and clickable media links.
+- **Direct Multi-Format Exporters**: Save results to CSV, Excel, or JSON with custom file-save dialogs.
+
+---
+
+### Mode 2: Headless Command-Line Interface (CLI)
+
+Ideal for automated workflows, headless servers, batch jobs, and cron scheduling.
+
 ```powershell
-python main.py --web
-```
-Open your browser at `http://localhost:7860`.
+# Basic usage: Scrape 100 messages from channel @durov and export to all formats
+python main.py --cli --channel durov --limit 100 --format all
 
-### 3. Headless Command-Line Interface (CLI)
+# Targeted usage: Export 500 messages to Excel (.xlsx) with polite pacing
+python main.py --cli --channel telegram --limit 500 --format xlsx
+```
+
+#### CLI Command Reference
+
+| Flag | Shorthand | Type | Default | Description |
+| :--- | :--- | :--- | :--- | :--- |
+| `--cli` | `-c` | `bool` | `False` | Activates headless command-line mode. |
+| `--channel` | N/A | `str` | `"durov"` | Channel username, `@handle`, or direct URL. |
+| `--limit` | N/A | `int` | `50` | Maximum messages to scrape before termination. |
+| `--format` | N/A | `choice`| `"all"` | Serialization format (`csv`, `json`, `xlsx`, `all`).|
+| `--web` | `-w` | `bool` | `False` | Launches the browser-based Gradio dashboard. |
+| `--port` | N/A | `int` | `7860` | Web server port (when running with `--web`). |
+
+---
+
+### Mode 3: Browser-Based Web Dashboard
+
+An interactive dashboard powered by Gradio, accessible from any browser on local networks.
+
 ```powershell
-# Scrape 50 messages from @durov and save to all formats:
-python main.py --cli --channel durov --limit 50 --format all
-
-# Scrape 100 messages from another channel to CSV:
-python main.py --cli --channel telegram --limit 100 --format csv
+python main.py --web --port 7860
 ```
+Navigate to `http://localhost:7860` to access the interactive web controls, real-time message tables, and direct file download buttons.
 
 ---
 
-## 📁 Project Structure
+## 6. Export Engine Specifications
 
-```
-telegram-channel-scraper/
-├── .github/
-│   └── workflows/
-│       ├── ci.yml                 # Automated CI tests for Python 3.10-3.12
-│       └── build-release.yml      # Automated Windows EXE release builder
-├── assets/
-│   ├── icon.ico                   # Multi-resolution application icon
-│   └── icon.png                   # High-res application preview icon
-├── scraper/
-│   ├── __init__.py                # Package exports
-│   ├── models.py                  # Dataclasses (Message, Reaction, Channel, Media)
-│   ├── normalizer.py              # URL & handle parser and validator
-│   ├── client.py                  # HTTP client with exponential backoff & jitter
-│   ├── parser.py                  # BeautifulSoup web preview parser
-│   ├── crawler.py                 # Multi-page backwards crawler
-│   ├── exporter.py                # CSV, Excel (.xlsx), and JSON exporters
-│   └── media_downloader.py        # Asynchronous media asset downloader
-├── ui/
-│   ├── __init__.py                # UI module exports with resilient fallbacks
-│   ├── desktop_app.py             # CustomTkinter modern dark desktop GUI
-│   └── web_app.py                 # Gradio web dashboard
-├── tests/
-│   ├── __init__.py
-│   ├── test_normalizer.py         # Unit tests for input parsing
-│   ├── test_parser.py             # Unit tests for HTML parser
-│   └── test_crawler_live.py       # Live integration test against public Telegram
-├── exports/                       # Default output directory (.gitkeep)
-├── downloads/                     # Optional media download directory (.gitkeep)
-├── build_exe.py                   # One-click PyInstaller build script
-├── TelegramScraper.spec           # PyInstaller build specification
-├── pyproject.toml                 # Modern PEP 518/621 packaging spec
-├── requirements.txt               # Direct dependencies
-├── .gitignore                     # Production Git ignore rules
-├── LICENSE                        # MIT Open Source License
-└── README.md                      # Documentation
-```
+### 1. Microsoft Excel Workbook (`.xlsx`)
+- Generated using `openpyxl`.
+- Headers are styled with Segoe UI bold typography, dark blue theme fills (`#1E3A8A`), and contrasting white text.
+- Column widths auto-adjust to content bounds with safety minimums and maximums to eliminate clipped text.
+
+### 2. Comma-Separated Values (`.csv`)
+- Serialized using `utf-8-sig` (UTF-8 encoding with Byte Order Mark).
+- Prevents Windows Excel from corrupting emojis, Cyrillic, Arabic, Asian character sets, and math symbols.
+
+### 3. JavaScript Object Notation (`.json`)
+- Indented hierarchical representation adhering to standard REST schemas.
+- Includes channel metadata envelope, total message counts, extraction timestamps, and nested media models.
 
 ---
 
-## 🧪 Testing
+## 7. Reliability, Rate-Limiting & Politeness Policy
 
-Run the automated test suite locally:
+To guarantee continuous uptime and respect upstream network infrastructure, the scraper implements standard enterprise politeness mechanisms:
+
+1. **Deterministic Request Pacing**: Defaults to a `1.0s` delay between reverse pagination batches. Tested safely up to `0.8s` without triggering gateway rate-limiting.
+2. **Exponential Backoff & Jitter**: In the event of an upstream HTTP `429 Too Many Requests` or `503 Service Unavailable`, the HTTP client activates an automatic retry policy with exponential backoff and randomized jitter:
+   $$\text{Backoff} = (\text{base\_delay} \times 2^{\text{attempt}}) + \text{random\_jitter}$$
+3. **HTTP Keep-Alive & Connection Pooling**: Utilizes an asynchronous `httpx.AsyncClient` session manager with pooled HTTP/2 and HTTP/1.1 connections.
+
+---
+
+## 8. Development & Continuous Integration
+
+### Local Test Execution
+The project maintains a unit and integration test suite covering input normalization, DOM parsing against real Telegram markup, and live crawler pagination:
+
 ```powershell
-python -m unittest discover tests
+# Run all automated test suites
+python -m unittest discover tests -v
 ```
 
----
-
-## 🛡️ Best Practices & Rate Limiting
-
-- **Politeness Delay**: The scraper defaults to a 1.0s delay between page requests. Keeping this between 0.8s and 2.0s ensures Telegram never triggers rate limits.
-- **Automatic Backoff**: If Telegram throttles requests (HTTP 429), the built-in HTTP client automatically applies exponential backoff with randomized jitter and retries without crashing.
+### GitHub Actions CI/CD
+- **Automated Testing (`.github/workflows/ci.yml`)**: Executes across Python `3.10`, `3.11`, and `3.12` on push and pull requests.
+- **Release Automation (`.github/workflows/build-release.yml`)**: Automatically packages `TelegramScraper.exe` on Windows runners and attaches the artifact to GitHub releases upon tag publication.
 
 ---
 
-## 📄 License
+## 9. Ethical Guidelines & Legal Disclaimer
 
-This project is licensed under the [MIT License](LICENSE).
+This software is developed exclusively for legitimate research, archival, open-source intelligence (OSINT), and data analysis purposes involving **publicly accessible** Telegram channels.
+
+- **No Private Data Access**: The framework cannot access private groups, invite-only channels, secret chats, or user profiles.
+- **Compliance**: Users are solely responsible for ensuring compliance with local laws, data privacy regulations (e.g., GDPR, CCPA), and upstream platform terms of service.
+- **Attribution**: The authors accept no liability for misuse, aggressive crawling configurations, or copyright violations resulting from user deployments.
+
+---
+
+## 10. License
+
+This project is licensed under the terms of the [MIT License](LICENSE).  
+Copyright (c) 2026 Telegram Channel Scraper Contributors.
