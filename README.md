@@ -1,11 +1,18 @@
-# Telegram Channel Scraper (Enterprise & OSINT Edition)
+<div align="center">
 
-[![CI Pipeline](https://github.com/placeholder/telegram-channel-scraper/actions/workflows/ci.yml/badge.svg)](https://github.com/placeholder/telegram-channel-scraper/actions)
+<img src="assets/icon.png" alt="Telegram Channel Scraper Icon" width="128" height="128" />
+
+# Telegram Channel Scraper
+
+**Enterprise-grade, zero-authentication data extraction framework for public Telegram channels.**
+
 [![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![GUI Framework](https://img.shields.io/badge/GUI-CustomTkinter%20v5-0088cc.svg)](https://github.com/TomSchimansky/CustomTkinter)
 [![Authentication Mode](https://img.shields.io/badge/Authentication-Zero--Auth%20Public%20Gateway-success.svg)](https://t.me)
 [![Build Target](https://img.shields.io/badge/Artifact-Windows%20x64%20EXE-informational.svg)](dist/TelegramScraper.exe)
+
+</div>
 
 ---
 
