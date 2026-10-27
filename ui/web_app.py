@@ -5,7 +5,6 @@ Allows browser-based scraping, data inspection, and instant file downloads.
 
 import os
 import asyncio
-from typing import Tuple
 from datetime import datetime
 import pandas as pd
 
